@@ -40,6 +40,12 @@ namespace RepositoryAssistant
 
             repos.RemoveAll(r => modules.Contains(r));
 
+            var tools = repos
+                           .Where(r => r.Name.StartsWith("Panacea.Tools."))
+                           .ToList();
+
+            repos.RemoveAll(r => tools.Contains(r));
+
             var apps = repos.Where(r => r.Name == "Panacea").ToList();
             repos.RemoveAll(r => apps.Contains(r));
 
@@ -50,6 +56,7 @@ namespace RepositoryAssistant
             CloneRepos(libs.Select(r => r.Name), Path.Combine(path, "Libraries"));
             CloneRepos(modules.Select(r => r.Name), Path.Combine(path, "Modules"));
             CloneRepos(apps.Select(r => r.Name), Path.Combine(path, "Applications"));
+            CloneRepos(tools.Select(r => r.Name), Path.Combine(path, "Tools"));
 
             Console.WriteLine("Press any key");
             Console.ReadKey();
@@ -166,7 +173,7 @@ namespace RepositoryAssistant
                             Console.WriteLine(mergeResult.Commit.ToString());
                         }
                     }).Wait();
-                    
+
                 }
             }
         }
