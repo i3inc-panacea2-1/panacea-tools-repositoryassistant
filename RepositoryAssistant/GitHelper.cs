@@ -90,7 +90,14 @@ namespace RepositoryAssistant
             };
             Task.Run(() =>
             {
-                LibGit2Sharp.Repository.Clone(url, path, co);
+                try
+                {
+                    LibGit2Sharp.Repository.Clone(url, path, co);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }).Wait();
             Console.WriteLine();
         }
@@ -103,28 +110,6 @@ namespace RepositoryAssistant
             Console.SetCursorPosition(0, currentLineCursor);
             Console.Write(progress.ReceivedObjects + "/" + progress.TotalObjects);
             return true;
-        }
-
-        public static string ReadValue(string text, string name, bool secure = false)
-        {
-            using (var reg = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PanaceaDev"))
-            {
-                string val = (string)reg.GetValue(name, null);
-                if (val == null)
-                {
-                    Console.WriteLine(text);
-                    val = Console.ReadLine();
-                    if (secure)
-                    {
-                        val = EncryptData(val);
-                    }
-                    reg.SetValue(name, val);
-                }
-                if (secure)
-                    return DecryptData(val);
-
-                return val;
-            }
         }
 
         public static void PullAll()
@@ -200,7 +185,7 @@ namespace RepositoryAssistant
                         new UsernamePasswordCredentials()
                         {
                             Username = settings.Username,
-                            Password = DecryptData(settings.Password)
+                            Password = RegistrySettings.DecryptData(settings.Password)
                         });
                     if (repo.RetrieveStatus().IsDirty) yield return dir;
                 }
@@ -211,52 +196,13 @@ namespace RepositoryAssistant
         {
             var settings = new Settings();
 
-            settings.ServerUrl = ReadValue("Github server url", "GithubUrl");
-            settings.Organization = ReadValue("Github organization", "Organization");
-            settings.Username = ReadValue("Github username", "Username");
-            settings.Password = ReadValue("Github password url", "Password", true);
-            settings.RootDir = ReadValue("Root directory", "RootDir");
+            settings.ServerUrl = RegistrySettings.ReadValue("Github server url", "GithubUrl");
+            settings.Organization = RegistrySettings.ReadValue("Github organization", "Organization");
+            settings.Username = RegistrySettings.ReadValue("Github username", "Username");
+            settings.Password = RegistrySettings.ReadValue("Github password url", "Password", true);
+            settings.RootDir = RegistrySettings.ReadValue("Root directory", "RootDir");
 
             return settings;
-        }
-
-
-        public static string EncryptData(string data)
-        {
-            if (data == null)
-                throw new ArgumentNullException("data");
-
-            //encrypt data
-            var encryptdata = Encoding.Unicode.GetBytes(data);
-            byte[] encrypted = ProtectedData.Protect(encryptdata, null, DataProtectionScope.CurrentUser);
-
-            //return as base64 string
-            return Convert.ToBase64String(encrypted);
-        }
-
-        public static string DecryptData(string cipher)
-        {
-            if (cipher == null) throw new ArgumentNullException("cipher");
-
-            //parse base64 string
-            byte[] data = Convert.FromBase64String(cipher);
-
-            //decrypt data
-            byte[] decrypted = ProtectedData.Unprotect(data, null, DataProtectionScope.CurrentUser);
-            return Encoding.Unicode.GetString(decrypted);
-        }
-
-        public static SecureString ToSecureString(this string plainString)
-        {
-            if (plainString == null)
-                return null;
-
-            SecureString secureString = new SecureString();
-            foreach (char c in plainString.ToCharArray())
-            {
-                secureString.AppendChar(c);
-            }
-            return secureString;
         }
     }
 }

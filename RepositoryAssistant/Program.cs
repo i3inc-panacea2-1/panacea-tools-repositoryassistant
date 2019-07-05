@@ -20,6 +20,7 @@ namespace RepositoryAssistant
             new KeyValuePair<string, Action>("Setup repositories.", GitHelper.SetupRepositories),
             new KeyValuePair<string, Action>("Get repositories with local changes.", GitHelper.PrintRepositoriesWithLocalChanges),
             new KeyValuePair<string, Action>("Pull all.", GitHelper.PullAll),
+            new KeyValuePair<string, Action>("Check all repo dependencies.", NugetHelper.CheckAllProjectDependencies),
             new KeyValuePair<string, Action>("Exit.", ()=> Environment.Exit(0)),
         };
 
@@ -59,9 +60,7 @@ namespace RepositoryAssistant
                 error = false;
                 _options[choice - 1].Value.Invoke();
             }
-
         }
     }
-    
 }
 
