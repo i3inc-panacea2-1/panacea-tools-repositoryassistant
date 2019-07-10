@@ -21,6 +21,7 @@ namespace RepositoryAssistant
             new KeyValuePair<string, Action>("Get repositories with local changes.", GitHelper.PrintRepositoriesWithLocalChanges),
             new KeyValuePair<string, Action>("Pull all.", GitHelper.PullAll),
             new KeyValuePair<string, Action>("Check all repo dependencies.", NugetHelper.CheckAllProjectDependencies),
+            new KeyValuePair<string, Action>("Update all nuget packages.", NugetHelper.NugetUpdateAllProjects),
             new KeyValuePair<string, Action>("Exit.", ()=> Environment.Exit(0)),
         };
 
