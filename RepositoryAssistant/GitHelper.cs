@@ -23,7 +23,7 @@ namespace RepositoryAssistant
 
             Console.WriteLine("Doing work. Don't look at me like that. The work should have finished by now. But you are still reading. Whatev.");
 
-            var git = new GitHubClient(new ProductHeaderValue("MyAmazingApp"), new Uri("https://git.i3inc.ca/"));
+            var git = new GitHubClient(new ProductHeaderValue("MyAmazingApp"), new Uri(settings.ServerUrl));
             git.Credentials = new Octokit.Credentials(settings.Username, settings.Password.ToString());
 
             var org = git.Organization.Get("Panacea2-1").Result;
@@ -46,7 +46,7 @@ namespace RepositoryAssistant
 
             repos.RemoveAll(r => tools.Contains(r));
 
-            var apps = repos.Where(r => r.Name == "Panacea").ToList();
+            var apps = repos.Where(r => r.Name == "Panacea" || r.Name.StartsWith("Panacea.Applications")).ToList();
             repos.RemoveAll(r => apps.Contains(r));
 
             var libs = repos;
