@@ -146,16 +146,25 @@ namespace RepositoryAssistant
                     };
                     Task.Run(() =>
                     {
-                        MergeResult mergeResult = Commands.Pull(
-                            repo,
-                            new LibGit2Sharp.Signature(settings.Username, settings.Username, DateTimeOffset.Now),
-                            pullOptions
-                        );
-                        if (mergeResult.Commit != null)
+                        try
                         {
-                            Console.WriteLine();
-                            Console.WriteLine(mergeResult.Status);
-                            Console.WriteLine(mergeResult.Commit.ToString());
+                            MergeResult mergeResult = Commands.Pull(
+                                repo,
+                                new LibGit2Sharp.Signature(settings.Username, settings.Username, DateTimeOffset.Now),
+                                pullOptions
+                            );
+                            if (mergeResult.Commit != null)
+                            {
+                                Console.WriteLine();
+                                Console.WriteLine(mergeResult.Status);
+                                Console.WriteLine(mergeResult.Commit.ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(ex.Message);
+                            Console.ForegroundColor = ConsoleColor.White;
                         }
                     }).Wait();
 
