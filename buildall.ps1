@@ -17,8 +17,8 @@ function DeleteBindAndObj([String] $path){
 
 }
 
-DeleteBindAndObj("..\Applications")
-DeleteBindAndObj("..\Modules")
+DeleteBindAndObj("..\..\Applications")
+DeleteBindAndObj("..\..\Modules")
 
 function Build-Sln([String] $path, [String] $configuration, [String] $platform){
 	$msbuild = Find-MsBuild
@@ -34,7 +34,7 @@ function Build-Sln([String] $path, [String] $configuration, [String] $platform){
 
 Function Find-MsBuild([int] $MaxVersion = 2019)
 {
-	$agentPath2 = "$Env:programfiles (x86)\Microsoft Visual Studio\2019\Preview\MSBuild\Current\Bin\msbuild.exe"
+	$agentPath2 = "$Env:programfiles (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\msbuild.exe"
     $agentPath = "$Env:programfiles (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\msbuild.exe"
     $devPath = "$Env:programfiles (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe"
     $proPath = "$Env:programfiles (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\msbuild.exe"
@@ -54,19 +54,19 @@ Function Find-MsBuild([int] $MaxVersion = 2019)
     throw "Yikes - Unable to find msbuild"
 }
 
-$baseDir = (Get-Item -Path "..\Libraries\" -Verbose).FullName
+$baseDir = (Get-Item -Path "..\..\Libraries\" -Verbose).FullName
 $items = Get-ChildItem -Path $baseDir -Include *.sln -Recurse
 foreach ($item in $items){
 	Build-Sln $item "Debug" "Any CPU"
 }
 
-$baseDir = (Get-Item -Path "..\Modules\" -Verbose).FullName
+$baseDir = (Get-Item -Path "..\..\Modules\" -Verbose).FullName
 $items = Get-ChildItem -Path $baseDir -Include *.sln -Recurse
 foreach ($item in $items){
 	Build-Sln $item "Debug" $platform
 }
 
-$baseDir = (Get-Item -Path "..\Applications\" -Verbose).FullName
+$baseDir = (Get-Item -Path "..\..\Applications\" -Verbose).FullName
 $items = Get-ChildItem -Path $baseDir -Include *.sln -Recurse
 foreach ($item in $items){
 	
