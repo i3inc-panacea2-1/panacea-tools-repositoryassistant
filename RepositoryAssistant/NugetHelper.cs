@@ -89,7 +89,7 @@ namespace RepositoryAssistant
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
         }
 

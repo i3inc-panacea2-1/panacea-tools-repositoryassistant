@@ -26,27 +26,27 @@ namespace RepositoryAssistant
             var git = new GitHubClient(new ProductHeaderValue("MyAmazingApp"), new Uri(settings.ServerUrl));
             git.Credentials = new Octokit.Credentials(settings.Username, settings.Password.ToString());
 
-            var org = git.Organization.Get("Panacea2-1").Result;
-            var repos = git.Repository.GetAllForOrg("Panacea2-1").Result.ToList();
+            var org = git.Organization.Get(settings.Organization).Result;
+            var repos = git.Repository.GetAllForOrg(settings.Organization).Result.ToList();
 
 
-            var apis = repos.Where(r => r.Name.StartsWith("Panacea.Modularity."))
+            var apis = repos.Where(r => r.Name.StartsWith("panacea-modularity-"))
                             .ToList();
             repos.RemoveAll(r => apis.Contains(r));
 
             var modules = repos
-                            .Where(r => r.Name.StartsWith("Panacea.Modules."))
+                            .Where(r => r.Name.StartsWith("panacea-modules-"))
                             .ToList();
 
             repos.RemoveAll(r => modules.Contains(r));
 
             var tools = repos
-                           .Where(r => r.Name.StartsWith("Panacea.Tools."))
+                           .Where(r => r.Name.StartsWith("panacea-tools-"))
                            .ToList();
 
             repos.RemoveAll(r => tools.Contains(r));
 
-            var apps = repos.Where(r => r.Name == "Panacea" || r.Name.StartsWith("Panacea.Applications")).ToList();
+            var apps = repos.Where(r => r.Name == "panacea" || r.Name.StartsWith("panacea-applications")).ToList();
             repos.RemoveAll(r => apps.Contains(r));
 
             var libs = repos;
@@ -208,7 +208,7 @@ namespace RepositoryAssistant
             settings.ServerUrl = RegistrySettings.ReadValue("Github server url", "GithubUrl");
             settings.Organization = RegistrySettings.ReadValue("Github organization", "Organization");
             settings.Username = RegistrySettings.ReadValue("Github username", "Username");
-            settings.Password = RegistrySettings.ReadValue("Github password url", "Password", true);
+            settings.Password = RegistrySettings.ReadValue("Github password", "Password", true);
             settings.RootDir = RegistrySettings.ReadValue("Root directory", "RootDir");
 
             return settings;
